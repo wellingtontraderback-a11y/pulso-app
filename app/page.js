@@ -1,139 +1,106 @@
 "use client";
-import { useState, useEffect } from "react";
-const STRIPE_LINK = "https://buy.stripe.com/00w4gBc693Mo0lrf9B9AA00";
+import { useState, useEffect } from 'react';
 
 const TREINOS = {
-  emagrecimento: [
-    { nome: "Agachamento Livre", series: "4x", reps: "15-20", descanso: "45s", video: "https://www.youtube.com/embed/aclHkVaku9U" },
-    { nome: "Burpee", series: "3x", reps: "12", descanso: "60s", video: "https://www.youtube.com/embed/TU8QYVW0gDU" },
-    { nome: "Corrida Intervalada", series: "5x", reps: "2 min", descanso: "1min", video: "https://www.youtube.com/embed/5iVQ1z7K3Q4" },
-  ],
-  hipertrofia: [
-    { nome: "Supino Reto", series: "4x", reps: "8-12", descanso: "90s", video: "https://www.youtube.com/embed/rT7DgCr-3pg" },
-    { nome: "Remada Curvada", series: "4x", reps: "10", descanso: "90s", video: "https://www.youtube.com/embed/vT2GjY_Umpw" },
-    { nome: "Leg Press", series: "4x", reps: "12", descanso: "90s", video: "https://www.youtube.com/embed/IZxyjW7MPJQ" },
-  ],
-  massa: [
-    { nome: "Terra", series: "5x", reps: "5", descanso: "120s", video: "https://www.youtube.com/embed/op9kVnSso6Q" },
-    { nome: "Desenvolvimento", series: "4x", reps: "8", descanso: "90s", video: "https://www.youtube.com/embed/qEwKCR5JCog" },
-  ]
+  "Perder Peso": ["HIIT 20min + 10k passos", "Circuito Full Body - 4x15", "Cardio + Abdômen", "Treino EMOM 25min"],
+  "Ganhar Massa": ["Peito + Tríceps - Pesado", "Costas + Bíceps", "Perna Completa", "Ombro + Abdômen"],
+  "Definir": ["Upper + Lower + Core", "HIIT + Musculação", "Funcional + Corrida", "Treino 3x Falha"]
 };
 
-export default function Home() {
+const DIETAS = {
+  "Perder Peso": { kcal: "-500 da TMB", prot: "2g por kg", refeicoes: ["Ovo + Aveia", "Frango + Arroz + Salada", "Whey + Fruta", "Omelete + Legumes"] },
+  "Ganhar Massa": { kcal: "+400 da TMB", prot: "2.2g por kg", refeicoes: ["Ovo + Pão + Pasta de amendoim", "Carne + Arroz + Feijão", "Hiper + Banana", "Frango + Batata Doce"] },
+  "Definir": { kcal: "Manter TMB", prot: "2.1g por kg", refeicoes: ["Iogurte + Granola", "Peixe + Arroz + Salada", "Whey + Aveia", "Atum + Torrada"] }
+};
+
+export default function PulsoApp() {
+  const [user, setUser] = useState(null);
   const [tab, setTab] = useState("hoje");
-  const [dados, setDados] = useState({ idade: "38", peso: "65", altura: "170", objetivo: "emagrecimento", sexo: "feminino" });
-  const [pago, setPago] = useState(false);
-  const [progresso, setProgresso] = useState([{semana:1, peso:65}]);
-  
+  const [isPremium, setIsPremium] = useState(false);
+  const [form, setForm] = useState({ nome: "", peso: "", altura: "", objetivo: "Perder Peso" });
+
   useEffect(() => {
-    const p = new URLSearchParams(window.location.search);
-    if (p.get("pago")==="true" || localStorage.getItem("pulso_pago")==="true") setPago(true);
-    if (localStorage.getItem("pulso_peso")) setProgresso(JSON.parse(localStorage.getItem("pulso_peso")));
+    const saved = localStorage.getItem("pulso_user");
+    if (saved) setUser(JSON.parse(saved));
+    if (window.location.search.includes("pago=true")) {
+      setIsPremium(true);
+      localStorage.setItem("pulso_premium", "true");
+    }
+    if (localStorage.getItem("pulso_premium") === "true") setIsPremium(true);
   }, []);
 
-  const liberar = () => { setPago(true); localStorage.setItem("pulso_pago","true"); }
-  
-  // Cálculos
-  const peso = parseFloat(dados.peso)||65; const altura = parseFloat(dados.altura)||170; const idade = parseFloat(dados.idade)||30;
-  const imc = (peso / ((altura/100)**2)).toFixed(1);
-  const tmb = dados.sexo==="feminino" ? 655 + (9.6*peso) + (1.8*altura) - (4.7*idade) : 66 + (13.7*peso) + (5*altura) - (6.8*idade);
-  const calorias = dados.objetivo==="emagrecimento" ? tmb-400 : dados.objetivo==="massa" ? tmb+400 : tmb;
-  const agua = (peso*35/1000).toFixed(1);
+  const salvar = () => {
+    if (!form.nome ||!form.peso ||!form.altura) return alert("Preencha tudo!");
+    localStorage.setItem("pulso_user", JSON.stringify(form));
+    setUser(form);
+  };
 
-  const treinosAtuais = TREINOS[dados.objetivo] || TREINOS.hipertrofia;
+  const tmb = user? Math.round(10 * Number(user.peso) + 6.25 * Number(user.altura) - 5 * 25 + 5) : 0;
+  const linkStripe = "https://buy.stripe.com/00w4gBc693Mo0lrf9B9AA00";
 
-  return (
-    <main style={{minHeight:"100vh", background:"#08080a", color:"white", fontFamily:"Inter, sans-serif"}}>
-      <header style={{padding:"16px", borderBottom:"1px solid #1f1f23", display:"flex", justifyContent:"space-between", alignItems:"center", position:"sticky", top:0, background:"#08080a", zIndex:10}}>
-        <h1 style={{fontSize:"22px", fontWeight:900}}>🔥 PULSO</h1>
-        <div style={{fontSize:"10px", background:"#1a1a1a", padding:"6px 10px", borderRadius:"20px"}}>IA • PRO</div>
-      </header>
-
-      <div style={{maxWidth:"1000px", margin:"0 auto", display:"grid", gridTemplateColumns:"1fr 320px", gap:"20px", padding:"20px"}}>
-        {/* COLUNA PRINCIPAL */}
-        <div>
-          <div style={{display:"flex", gap:"8px", marginBottom:"16px"}}>
-            {["hoje","treino","dieta","calc","progresso"].map(t=>(
-              <button key={t} onClick={()=>setTab(t)} style={{padding:"8px 14px", borderRadius:"20px", border:"none", background: tab===t ? "#22c55e" : "#1e1e22", color:"white", fontWeight:"bold", fontSize:"12px", textTransform:"uppercase"}}>{t}</button>
-            ))}
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center p-4">
+        <div className="w-full max-w-md bg-[#141414] border border-[#222] rounded-[24px] p-8">
+          <div className="flex items-center gap-2 mb-8"><div className="w-8 h-8 bg-[#ccff00] rounded-full"></div><h1 className="text-2xl font-black">PULSO</h1></div>
+          <h2 className="text-3xl font-bold leading-tight mb-2">Vamos montar<br/>seu plano.</h2>
+          <p className="text-zinc-500 mb-8 text-sm">Leva 30 segundos.</p>
+          <div className="space-y-4">
+            <input placeholder="Seu nome" className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-xl px-4 py-4 outline-none focus:border-[#ccff00]" value={form.nome} onChange={e=>setForm({...form, nome:e.target.value})} />
+            <div className="grid grid-cols-2 gap-3">
+              <input placeholder="Peso kg" type="number" className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-xl px-4 py-4 outline-none" value={form.peso} onChange={e=>setForm({...form, peso:e.target.value})} />
+              <input placeholder="Altura cm" type="number" className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-xl px-4 py-4 outline-none" value={form.altura} onChange={e=>setForm({...form, altura:e.target.value})} />
+            </div>
+            <select className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-xl px-4 py-4 outline-none" value={form.objetivo} onChange={e=>setForm({...form, objetivo:e.target.value})}><option>Perder Peso</option><option>Ganhar Massa</option><option>Definir</option></select>
+            <button onClick={salvar} className="w-full bg-[#ccff00] text-black font-black py-4 rounded-xl text-lg mt-2">CRIAR MEU PLANO →</button>
           </div>
-
-          {tab==="hoje" && (
-            <div style={{background:"#121214", borderRadius:"16px", padding:"20px"}}>
-              <h2 style={{fontSize:"18px", marginBottom:"10px"}}>Rotina Inteligente de Hoje 🤖</h2>
-              <div style={{display:"grid", gap:"10px"}}>
-                <div style={{background:"#1e1e22", padding:"12px", borderRadius:"12px"}}>✅ <b>06:30</b> - Beber 500ml água + Cardio leve</div>
-                <div style={{background:"#1e1e22", padding:"12px", borderRadius:"12px"}}>🍳 <b>07:30</b> - Café: 2 ovos + aveia (320 kcal)</div>
-                <div style={{background:"#1e1e22", padding:"12px", borderRadius:"12px"}}>💪 <b>18:00</b> - Treino {dados.objetivo} - 45 min</div>
-                <div style={{background:"#1e1e22", padding:"12px", borderRadius:"12px"}}>🌙 <b>21:00</b> - Jantar leve + Registrar peso</div>
-              </div>
-            </div>
-          )}
-
-          {tab==="treino" && (
-            <div style={{display:"grid", gap:"12px"}}>
-              {treinosAtuais.map((ex,i)=>(
-                <div key={i} style={{background:"#121214", borderRadius:"16px", overflow:"hidden"}}>
-                  <div style={{padding:"16px"}}>
-                    <h3 style={{margin:0}}>{ex.nome}</h3>
-                    <p style={{fontSize:"12px", color:"#888"}}>{ex.series} • {ex.reps} • Descanso: {ex.descanso}</p>
-                  </div>
-                  {pago ? <iframe width="100%" height="200" src={ex.video} frameBorder="0" allowFullScreen></iframe> : <div style={{height:"200px", background:"#1a1a1a", display:"flex", alignItems:"center", justifyContent:"center", filter:"blur(10px)"}}>🔒 Vídeo Premium</div>}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {tab==="dieta" && (
-            <div style={{background:"#121214", borderRadius:"16px", padding:"20px"}}>
-              <h3>Dieta para {dados.objetivo} - {calorias.toFixed(0)} kcal/dia</h3>
-              <div style={{filter: pago ? "none" : "blur(8px)"}}>
-                <p>☕ Café: Ovos + aveia + banana</p><p>🥪 Lanche: Whey + maçã</p><p>🍛 Almoço: Frango 150g + arroz 100g + salada</p><p>🍌 Pré-treino: Pão + pasta amendoim</p><p>🍽️ Jantar: Omelete + legumes</p>
-              </div>
-              {!pago && <div style={{textAlign:"center", marginTop:"-80px", position:"relative"}}><a href={STRIPE_LINK} style={{background:"#22c55e", padding:"12px 20px", borderRadius:"10px", color:"white", textDecoration:"none", fontWeight:"bold"}}>Desbloquear Dieta R$29,90</a></div>}
-            </div>
-          )}
-
-          {tab==="calc" && (
-            <div style={{background:"#121214", borderRadius:"16px", padding:"20px", display:"grid", gap:"10px"}}>
-              <h3>Calculadora Metabólica</h3>
-              <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px"}}>
-                <div style={{background:"#1e1e22", padding:"14px", borderRadius:"12px"}}><small>IMC</small><h2>{imc}</h2></div>
-                <div style={{background:"#1e1e22", padding:"14px", borderRadius:"12px"}}><small>TMB</small><h2>{tmb.toFixed(0)} kcal</h2></div>
-                <div style={{background:"#1e1e22", padding:"14px", borderRadius:"12px"}}><small>Meta Calórica</small><h2>{calorias.toFixed(0)} kcal</h2></div>
-                <div style={{background:"#1e1e22", padding:"14px", borderRadius:"12px"}}><small>Água/dia</small><h2>{agua} L</h2></div>
-              </div>
-            </div>
-          )}
-
-          {tab==="progresso" && (
-            <div style={{background:"#121214", borderRadius:"16px", padding:"20px"}}>
-              <h3>Evolução Semanal</h3>
-              <div style={{display:"flex", gap:"10px", marginTop:"15px"}}>
-                {progresso.map((p,i)=><div key={i} style={{background:"#1e1e22", padding:"10px", borderRadius:"8px", flex:1, textAlign:"center"}}><small>Sem {p.semana}</small><br/><b>{p.peso}kg</b></div>)}
-              </div>
-              <button onClick={()=>{ const n=[...progresso, {semana:progresso.length+1, peso:peso}]; setProgresso(n); localStorage.setItem("pulso_peso", JSON.stringify(n));}} style={{marginTop:"15px", width:"100%", padding:"12px", background:"#22c55e", border:"none", borderRadius:"10px", color:"white", fontWeight:"bold"}}>+ Registrar Peso de Hoje</button>
-            </div>
-          )}
-        </div>
-
-        {/* COLUNA LATERAL - CONFIG */}
-        <div style={{background:"#121214", borderRadius:"16px", padding:"20px", height:"fit-content"}}>
-          <h3 style={{fontSize:"14px", marginBottom:"12px"}}>Seus Dados</h3>
-          <input placeholder="Idade" value={dados.idade} onChange={e=>setDados({...dados, idade:e.target.value})} style={inputStyle} />
-          <input placeholder="Peso kg" value={dados.peso} onChange={e=>setDados({...dados, peso:e.target.value})} style={inputStyle} />
-          <input placeholder="Altura cm" value={dados.altura} onChange={e=>setDados({...dados, altura:e.target.value})} style={inputStyle} />
-          <select value={dados.sexo} onChange={e=>setDados({...dados, sexo:e.target.value})} style={inputStyle}><option value="feminino">Feminino</option><option value="masculino">Masculino</option></select>
-          <select value={dados.objetivo} onChange={e=>setDados({...dados, objetivo:e.target.value})} style={inputStyle}><option value="emagrecimento">Emagrecimento</option><option value="massa">Ganho de Massa</option><option value="hipertrofia">Hipertrofia</option><option value="definicao">Definição</option></select>
-          {!pago ? (
-            <>
-              <a href={STRIPE_LINK} style={{display:"block", textAlign:"center", background:"#22c55e", padding:"14px", borderRadius:"12px", color:"white", textDecoration:"none", fontWeight:"bold", marginTop:"10px"}}>🔓 LIBERAR APP COMPLETO R$29,90</a>
-              <button onClick={liberar} style={{width:"100%", marginTop:"8px", background:"transparent", border:"1px solid #333", padding:"10px", borderRadius:"10px", color:"#888"}}>Já paguei, liberar</button>
-            </>
-          ) : <div style={{marginTop:"10px", background:"#0f2e1a", color:"#22c55e", padding:"12px", borderRadius:"10px", textAlign:"center", fontWeight:"bold"}}>✅ PREMIUM ATIVO</div>}
         </div>
       </div>
-    </main>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] text-white pb-28">
+      <div className="sticky top-0 z-20 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-[#1a1a1a] px-6 py-4 flex justify-between items-center">
+        <div className="flex items-center gap-3"><div className="w-8 h-8 bg-[#ccff00] rounded-full flex items-center justify-center text-black font-black text-sm">P</div><div><p className="font-bold text-sm leading-none">{user.nome.toUpperCase()}</p><p className="text-[11px] text-zinc-500">{user.objetivo} • {isPremium? "PREMIUM" : "GRÁTIS"}</p></div></div>
+        {!isPremium && <a href={linkStripe} className="bg-[#ccff00] text-black text-[11px] font-black px-4 py-2 rounded-full">VIRAR PREMIUM</a>}
+      </div>
+
+      <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-4">
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-[#141414] border border-[#222] rounded-2xl p-4"><p className="text-[10px] text-zinc-500 uppercase">TMB</p><p className="text-xl font-black text-[#ccff00]">{tmb}</p><p className="text-[10px] text-zinc-500">kcal/dia</p></div>
+          <div className="bg-[#141414] border border-[#222] rounded-2xl p-4"><p className="text-[10px] text-zinc-500 uppercase">Meta</p><p className="text-sm font-bold leading-tight">{DIETAS[user.objetivo].kcal}</p><p className="text-[10px] text-zinc-500">{DIETAS[user.objetivo].prot}</p></div>
+          <div className="bg-[#141414] border border-[#222] rounded-2xl p-4"><p className="text-[10px] text-zinc-500 uppercase">Plano</p><p className="text-sm font-bold">{user.objetivo}</p><p className="text-[10px] text-zinc-500">{user.peso}kg / {user.altura}cm</p></div>
+        </div>
+
+        {tab === "hoje" && (
+          <div className="space-y-4">
+            <div className="bg-[#ccff00] text-black rounded-[20px] p-6"><h3 className="font-black text-lg">TREINO DE HOJE</h3><p className="font-bold mt-1">{TREINOS[user.objetivo][0]}</p><p className="text-xs mt-2 opacity-70">Vídeos completos na aba TREINOS (Premium)</p></div>
+            <div className="bg-[#141414] border border-[#222] rounded-[20px] p-6"><h3 className="font-bold mb-3">DIETA DE HOJE</h3>{DIETAS[user.objetivo].refeicoes.map((r,i)=><div key={i} className="flex justify-between py-2 border-b border-[#1f1f1f] last:border-0 text-sm"><span>{r}</span><span className="text-zinc-500 text-xs">Refeição {i+1}</span></div>)}</div>
+          </div>
+        )}
+
+        {tab === "treinos" && (
+          <div className="space-y-3">
+            {!isPremium && <div className="bg-[#1a1a1a] border border-dashed border-[#333] rounded-2xl p-6 text-center"><p className="text-sm font-bold">🔒 TREINOS BLOQUEADOS</p><p className="text-xs text-zinc-500 mt-1 mb-4">Assine por R$29,90/mês para ver os vídeos</p><a href={linkStripe} className="inline-block bg-[#ccff00] text-black font-black px-6 py-3 rounded-xl text-sm">LIBERAR POR R$29,90</a><button onClick={()=>{setIsPremium(true); localStorage.setItem("pulso_premium","true")}} className="block mx-auto mt-3 text-[11px] text-zinc-500 underline">Já paguei, liberar</button></div>}
+            {TREINOS[user.objetivo].map((t,i)=><div key={i} className={`bg-[#141414] border border-[#222] rounded-2xl p-5 flex justify-between items-center ${!isPremium? 'blur-[6px] pointer-events-none' : ''}`}><div><p className="text-[10px] text-zinc-500">DIA {i+1}</p><p className="font-bold text-sm">{t}</p></div><div className="w-10 h-10 bg-[#1e1e1e] rounded-full flex items-center justify-center">▶</div></div>)}
+          </div>
+        )}
+
+        {tab === "dieta" && (
+          <div className="bg-[#141414] border border-[#222] rounded-[20px] p-6">
+            <h3 className="font-black text-lg mb-4">PLANO ALIMENTAR</h3>
+            <div className="grid gap-3">{DIETAS[user.objetivo].refeicoes.map((r,i)=><div key={i} className="bg-[#1e1e1e] rounded-xl p-4 flex justify-between"><span className="text-sm">{r}</span><span className="text-xs text-[#ccff00]">✓</span></div>)}</div>
+            <div className="mt-6 p-4 bg-[#1a1a1a] rounded-xl"><p className="text-xs text-zinc-400">Sua meta calórica: <span className="text-white font-bold">{DIETAS[user.objetivo].kcal}</span> • Proteína: <span className="text-white font-bold">{DIETAS[user.objetivo].prot}</span></p></div>
+          </div>
+        )}
+      </div>
+
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-[#141414] border border-[#2a2a2a] rounded-full p-1.5 flex justify-between shadow-2xl">
+        <button onClick={()=>setTab("hoje")} className={`flex-1 py-3 rounded-full text-[12px] font-bold ${tab==="hoje"? "bg-white text-black" : "text-zinc-500"}`}>HOJE</button>
+        <button onClick={()=>setTab("treinos")} className={`flex-1 py-3 rounded-full text-[12px] font-bold ${tab==="treinos"? "bg-white text-black" : "text-zinc-500"}`}>TREINOS</button>
+        <button onClick={()=>setTab("dieta")} className={`flex-1 py-3 rounded-full text-[12px] font-bold ${tab==="dieta"? "bg-white text-black" : "text-zinc-500"}`}>DIETA</button>
+      </div>
+    </div>
   );
 }
-const inputStyle = {width:"100%", padding:"12px", marginBottom:"8px", borderRadius:"8px", background:"#1e1e22", border:"1px solid #2a2a2e", color:"white"};
