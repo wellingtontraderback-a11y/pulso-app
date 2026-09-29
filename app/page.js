@@ -11,6 +11,7 @@ export default function PulsoApp() {
   const [user, setUser] = useState(null);
   const [tab, setTab] = useState("hoje");
   const [isPremium, setIsPremium] = useState(false);
+  const [video, setVideo] = useState(null);
   const [form, setForm] = useState({ nome: "", peso: "", altura: "", objetivo: "Perder Peso" });
 
   useEffect(() => {
@@ -28,7 +29,23 @@ export default function PulsoApp() {
 
   const tmb = user? Math.round(10*Number(user.peso)+6.25*Number(user.altura)-5*25+5) : 0;
   const link = "https://buy.stripe.com/00w4gBc693Mo0lrf9B9AA00";
-  const treinos = { "Perder Peso":["HIIT 20min + 10k passos","Circuito Full Body","Cardio + Abdomen"], "Ganhar Massa":["Peito + Triceps","Costas + Biceps","Perna Completa"], "Definir":["Upper + Lower + Core","HIIT + Musculacao","Funcional"] };
+
+  const treinos = {
+    "Perder Peso":["HIIT 20min + 10k passos","Circuito Full Body","Cardio + Abdomen"],
+    "Ganhar Massa":["Peito + Triceps","Costas + Biceps","Perna Completa"],
+    "Definir":["Upper + Lower + Core","HIIT + Musculacao","Funcional"]
+  };
+  const videos = {
+    "HIIT 20min + 10k passos":"https://www.youtube.com/embed/ml6cT4AZdqI",
+    "Circuito Full Body":"https://www.youtube.com/embed/U0bhE67HuDY",
+    "Cardio + Abdomen":"https://www.youtube.com/embed/AnYl6Nk9GOA",
+    "Peito + Triceps":"https://www.youtube.com/embed/rT7DgCr-3pg",
+    "Costas + Biceps":"https://www.youtube.com/embed/CA2ZK8xSYUo",
+    "Perna Completa":"https://www.youtube.com/embed/aclHkVaku9U",
+    "Upper + Lower + Core":"https://www.youtube.com/embed/IODxDxX7oi4",
+    "HIIT + Musculacao":"https://www.youtube.com/embed/ml6cT4AZdqI",
+    "Funcional":"https://www.youtube.com/embed/U0bhE67HuDY"
+  };
   const dietas = { "Perder Peso":["Ovo + Aveia","Frango + Arroz + Salada","Whey + Fruta"], "Ganhar Massa":["Ovo + Pao + Amendoim","Carne + Arroz + Feijao","Frango + Batata Doce"], "Definir":["Iogurte + Granola","Peixe + Arroz + Salada","Whey + Aveia"] };
 
   if(!user) return (
@@ -47,7 +64,9 @@ export default function PulsoApp() {
 
   return (
     <div style={{minHeight:'100vh',background:'#0a0a0a',color:'white',paddingBottom:'90px',fontFamily:'sans-serif'}}>
-      <div style={{position:'sticky',top:0,background:'#0a0a0a',borderBottom:'1px solid #1a1a1a',padding:'16px 20px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+      {video && <div onClick={()=>setVideo(null)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.9)',zIndex:999,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px'}}><div style={{width:'100%',maxWidth:'500px',background:'#111',borderRadius:'16px',padding:'16px'}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:'12px'}}><b>{video}</b><button onClick={()=>setVideo(null)} style={{background:'#222',color:'white',border:'none',borderRadius:'50%',width:'30px',height:'30px'}}>X</button></div><div style={{position:'relative',paddingBottom:'56.25%',height:0}}><iframe src={videos[video]} style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',border:0,borderRadius:'12px'}} allowFullScreen/></div><button onClick={()=>setVideo(null)} style={{width:'100%',marginTop:'12px',padding:'12px',background:'#ccff00',border:'none',borderRadius:'10px',fontWeight:800}}>FECHAR VIDEO</button></div></div>}
+
+      <div style={{position:'sticky',top:0,background:'#0a0a0a',borderBottom:'1px solid #1a1a1a',padding:'16px 20px',display:'flex',justifyContent:'space-between',alignItems:'center',zIndex:10}}>
         <b>{user.nome.toUpperCase()} • {isPremium?'PREMIUM':'GRATIS'}</b>
         {!isPremium && <a href={link} style={{background:'#ccff00',color:'black',padding:'6px 14px',borderRadius:'20px',fontSize:'11px',fontWeight:900,textDecoration:'none'}}>VIRAR PREMIUM</a>}
       </div>
@@ -57,10 +76,21 @@ export default function PulsoApp() {
           <div style={card}><small style={small}>META</small><div style={{fontWeight:700,fontSize:'13px'}}>{user.objetivo}</div><small style={small}>{form.peso}kg</small></div>
           <div style={card}><small style={small}>STATUS</small><div style={{fontWeight:700,fontSize:'13px'}}>{isPremium?'LIBERADO':'BLOQUEADO'}</div></div>
         </div>
-        {tab==='hoje' && <><div style={{background:'#ccff00',color:'black',borderRadius:'20px',padding:'20px'}}><b>TREINO DE HOJE</b><div style={{fontWeight:800,marginTop:'6px'}}>{treinos[user.objetivo][0]}</div></div><div style={card2}><b>DIETA DE HOJE</b>{dietas[user.objetivo].map((d,i)=><div key={i} style={{display:'flex',justifyContent:'space-between',padding:'10px 0',borderBottom:'1px solid #222',fontSize:'14px'}}><span>{d}</span><span style={{color:'#666'}}>0{i+1}</span></div>)}</div></>}
-        {tab==='treinos' && <div>{!isPremium && <div style={{background:'#1a1a1a',border:'1px dashed #333',borderRadius:'16px',padding:'20px',textAlign:'center',marginBottom:'12px'}}><b>🔒 TREINOS BLOQUEADOS</b><p style={{fontSize:'12px',color:'#777',margin:'6px 0 14px'}}>Assine por R$29,90</p><a href={link} style={{background:'#ccff00',color:'black',padding:'12px 20px',borderRadius:'10px',fontWeight:900,textDecoration:'none',fontSize:'13px'}}>LIBERAR POR R$29,90</a><br/><button onClick={()=>{setIsPremium(true);localStorage.setItem("pulso_premium","true")}} style={{background:'none',border:'none',color:'#666',fontSize:'11px',marginTop:'10px',textDecoration:'underline'}}>Ja paguei</button></div>}{treinos[user.objetivo].map((t,i)=><div key={i} style={{...card2,filter:!isPremium?'blur(5px)':''}}><small style={small}>DIA {i+1}</small><div style={{fontWeight:700}}>{t}</div></div>)}</div>}
+
+        {tab==='hoje' && <>
+          <div onClick={()=>setVideo(treinos[user.objetivo][0])} style={{background:'#ccff00',color:'black',borderRadius:'20px',padding:'20px',cursor:'pointer'}}>
+            <div style={{display:'flex',justifyContent:'space-between'}}><b>TREINO DE HOJE</b><span>▶️ VIDEO</span></div>
+            <div style={{fontWeight:800,marginTop:'6px',fontSize:'18px'}}>{treinos[user.objetivo][0]}</div>
+            <small style={{fontSize:'11px',marginTop:'8px',display:'block',opacity:0.7}}>Clique para ver o vídeo explicativo</small>
+          </div>
+          <div style={card2}><b>DIETA DE HOJE</b>{dietas[user.objetivo].map((d,i)=><div key={i} style={{display:'flex',justifyContent:'space-between',padding:'10px 0',borderBottom:'1px solid #222',fontSize:'14px'}}><span>{d}</span><span style={{color:'#666'}}>0{i+1}</span></div>)}</div>
+        </>}
+
+        {tab==='treinos' && <div>{!isPremium && <div style={{background:'#1a1a1a',border:'1px dashed #333',borderRadius:'16px',padding:'20px',textAlign:'center',marginBottom:'12px'}}><b>🔒 TREINOS BLOQUEADOS</b><p style={{fontSize:'12px',color:'#777',margin:'6px 0 14px'}}>Assine por R$29,90</p><a href={link} style={{background:'#ccff00',color:'black',padding:'12px 20px',borderRadius:'10px',fontWeight:900,textDecoration:'none',fontSize:'13px'}}>LIBERAR POR R$29,90</a></div>}{treinos[user.objetivo].map((t,i)=><div key={i} onClick={()=>setVideo(t)} style={{...card2,marginBottom:'10px',cursor:'pointer',display:'flex',justifyContent:'space-between',alignItems:'center',filter:!isPremium?'blur(5px)':''}}><div><small style={small}>DIA {i+1}</small><div style={{fontWeight:700}}>{t}</div></div><div style={{background:'#ccff00',color:'black',width:'36px',height:'36px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:900}}>▶</div></div>)}</div>}
+
         {tab==='dieta' && <div style={card2}><b>PLANO ALIMENTAR</b>{dietas[user.objetivo].map((d,i)=><div key={i} style={{background:'#1e1e1e',borderRadius:'10px',padding:'12px',marginTop:'10px',fontSize:'14px'}}>{d}</div>)}</div>}
       </div>
+
       <div style={{position:'fixed',bottom:'16px',left:'50%',transform:'translateX(-50%)',width:'92%',maxWidth:'380px',background:'#1a1a1a',border:'1px solid #333',borderRadius:'999px',padding:'6px',display:'flex'}}>
         <button onClick={()=>setTab('hoje')} style={tabBtn(tab==='hoje')}>HOJE</button><button onClick={()=>setTab('treinos')} style={tabBtn(tab==='treinos')}>TREINOS</button><button onClick={()=>setTab('dieta')} style={tabBtn(tab==='dieta')}>DIETA</button>
       </div>
