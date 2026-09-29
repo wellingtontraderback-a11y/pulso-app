@@ -1,36 +1,25 @@
-import Link from "next/link";
-
-export default function HomePage() {
+"use client"
+import { useState } from 'react'
+import { treinos } from '@/lib/treinos'
+export default function Home() {
+  const [ver, setVer] = useState(false)
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 text-center gap-6">
-      <span className="text-xs font-semibold tracking-wide text-accent">
-        FASE 1 · BASE DO APP
-      </span>
-
-      <h1 className="font-display text-4xl font-extrabold tracking-tight max-w-sm">
-        Pulso<span className="text-accent">.</span>
-      </h1>
-
-      <p className="text-muted max-w-xs text-sm leading-relaxed">
-        Treinos personalizados, dieta gerada por IA e acompanhamento de
-        evolução — em um único lugar.
-      </p>
-
-      <Link
-        href="/cadastro"
-        className="bg-accent text-[#2A1408] font-bold rounded-app px-6 py-3 text-sm"
-      >
-        Criar conta
-      </Link>
-
-      <Link href="/login" className="text-muted text-xs underline">
-        Já tenho conta
-      </Link>
-
-      <p className="text-muted text-xs max-w-xs">
-        Cadastro, login e escolha de objetivo já funcionam de verdade. A
-        biblioteca de treinos entra no próximo arquivo.
-      </p>
-    </main>
-  );
+    <div style={{background:'#0a0a0a',color:'white',minHeight:'100vh',padding:'20px',fontFamily:'Arial'}}>
+      <div style={{maxWidth:'400px',margin:'0 auto'}}>
+        <h1>PULSO<span style={{color:'#00ff88'}}>.</span></h1>
+        <p style={{color:'#888'}}>Treinos personalizados, dieta por IA</p>
+        <div style={{marginTop:'30px',background:'#1a1a1a',padding:'20px',borderRadius:'16px'}}>
+          <button onClick={()=>setVer(!ver)} style={{width:'100%',background:'#00ff88',color:'black',border:'none',padding:'15px',borderRadius:'12px',fontWeight:'bold'}}>
+            {ver ? 'Esconder' : 'Ver treinos 🔥'}
+          </button>
+        </div>
+        {ver && treinos.map(t=>(
+          <div key={t.id} style={{background:'#1a1a1a',padding:'16px',borderRadius:'12px',marginTop:'12px',borderLeft:'4px solid #00ff88'}}>
+            <strong>{t.nome}</strong><p style={{fontSize:'12px',color:'#888'}}>{t.duracao} - {t.nivel}</p>
+            <ul style={{fontSize:'14px',color:'#ccc'}}>{t.exercicios.map((e,i)=><li key={i}>{e}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
