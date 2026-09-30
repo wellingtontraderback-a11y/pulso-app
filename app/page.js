@@ -28,7 +28,7 @@ export default function Page(){
   return (
     <div style={{background:"#000",color:"#fff",minHeight:"100vh",padding:16,paddingBottom:120}}>
       <div style={{textAlign:"center",padding:10,border:"1px solid #222",borderRadius:12,marginBottom:16}}>
-        <span style={{color:VERDE,fontWeight:"bold"}}>WELLINGTON</span> • {isPremium?"PREMIUM":"GRATIS"}
+        <span style={{color:VERDE,fontWeight:"bold"}}>TREINO GRATIS</span> • {isPremium?"PREMIUM":"GRATIS"}
       </div>
 
       <div style={{background:"#111",borderRadius:16,padding:16,marginBottom:12}}>
