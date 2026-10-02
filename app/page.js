@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-const LINK="https://buy.stripe.com/7sY6oJ6LP3Mo7NTbXp9AA01"
+const LINK="https://pay.kiwify.com.br/beB8lrj"
 const VERDE="#ccff00"
 
 export default function Page(){
