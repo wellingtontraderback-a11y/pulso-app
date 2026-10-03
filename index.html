@@ -357,10 +357,13 @@ function renderWorkouts(){
   const list = document.getElementById('workout-list');
   const g = state.goal || 'hipertrofia';
   function getVideo(nome){
-  const vids={
-    "Peito e tríceps":"https://www.youtube.com/embed/rT7DgCr-3pg",
-"Costas e bíceps":"https://www.youtube.com/embed/s8taXR3m2o0",
-"Pernas":"https://www.youtube.com/embed/1f8yo_elGaU"
+const vids={
+  "Circuito metabólico":"https://www.youtube.com/embed/5g1U8z8l5kY",
+  "Cardio + core":"https://www.youtube.com/embed/4pKly2FdzWg",
+  "Peito e tríceps":"https://www.youtube.com/embed/rT7DgCr-3pg",
+  "Costas e bíceps":"https://www.youtube.com/embed/s8taXR3m2o0",
+  "Pernas pesado":"https://www.youtube.com/embed/1f8yo_elGaU",
+  "Ombro e trapézio":"https://www.youtube.com/embed/q5_9cV4b3aQ"
 };
 return vids[nome] || vids["Peito e tríceps"];
 }
