@@ -154,7 +154,7 @@ a{color:inherit}
 <p style="color:#8FA396;font-size:14px;margin-bottom:18px">Digite sua senha da Kiwify</p>
 <input id="lock-input" style="width:100%;background:#1E2F24;border:1px solid #28382E;border-radius:10px;padding:14px;color:#fff;text-align:center;font-weight:700" placeholder="SENHA">
 <button id="lock-btn" style="width:100%;background:#FF7A45;color:#2A1408;border:none;border-radius:12px;padding:14px;font-weight:700;margin-top:12px">Desbloquear App</button>
-<p style="margin-top:12px;font-size:12px;color:#8FA396">Senha: <b style="color:#FF7A45">PULSO29</b></p>
+
 </div>
 </div>
 
@@ -484,7 +484,7 @@ function unlock(){
   if(document.getElementById('lock-input').value.trim().toUpperCase()===SENHA){
     localStorage.setItem('pulso_auth','true');
     document.getElementById('lock-screen').style.display='none';
-  } else alert('Senha errada! Use PULSO29')
+  } else alert('Senha errada!')
 }
 document.getElementById('lock-btn').onclick=unlock;
 document.getElementById('lock-input').onkeydown=e=>{if(e.key==='Enter')unlock()};
