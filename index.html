@@ -147,15 +147,26 @@ a{color:inherit}
 </style>
 </head>
 <body>
-  <div id="lock-screen" style="position:fixed;inset:0;z-index:9999;background:#0F1A14;display:flex;align-items:center;justify-content:center;padding:24px">
-<div style="background:#17251D;border:1px solid #28382E;border-radius:18px;padding:28px;max-width:380px;width:100%;text-align:center">
-<div style="font-size:40px">🔒</div>
-<h2 style="margin:10px 0;color:#EAF0E8">Área Exclusiva</h2>
-<p style="color:#8FA396;font-size:14px;margin-bottom:18px">Digite sua senha da Kiwify</p>
-<input id="lock-input" style="width:100%;background:#1E2F24;border:1px solid #28382E;border-radius:10px;padding:14px;color:#fff;text-align:center;font-weight:700" placeholder="SENHA">
-<button id="lock-btn" style="width:100%;background:#FF7A45;color:#2A1408;border:none;border-radius:12px;padding:14px;font-weight:700;margin-top:12px">Desbloquear App</button>
-
-</div>
+<div id="lock-screen" style="min-height:100vh; position:fixed; top:0; left:0; width:100%; background: linear-gradient(180deg, #0F1A14 0%, #17251D 100%); display:flex; align-items:center; justify-content:center; padding:20px; z-index:9999;">
+  <div style="max-width:380px; width:100%; background: #1E2F24; border-radius:24px; padding:28px; border:1px solid #2A3F2E; text-align:center;">
+    <div style="font-size:48px;">🔥</div>
+    <h1 style="color:#EAF0E8; font-size:22px; font-weight:800; margin:0;">SEQUE ATÉ 10KG EM 30 DIAS</h1>
+    <p style="color:#FF7A45; font-weight:700; margin-top:6px;">COM O PULSO APP</p>
+    <div style="text-align:left; background:#0F1A14; border-radius:16px; padding:16px; margin:20px 0;">
+      <p style="color:white; font-weight:700; margin:0 0 10px 0; font-size:13px;">VOCÊ VAI RECEBER:</p>
+      <p style="color:#8FA396; font-size:13px; margin:5px 0;">✅ +50 Treinos em Vídeo</p>
+      <p style="color:#8FA396; font-size:13px; margin:5px 0;">✅ Plano Alimentar</p>
+      <p style="color:#8FA396; font-size:13px; margin:5px 0;">✅ Calculadora de Calorias</p>
+      <p style="color:#8FA396; font-size:13px; margin:5px 0;">✅ Acesso Vitalício</p>
+    </div>
+    <a href="https://pay.kiwify.com.br/beB8lrj" target="_blank" style="display:block; background: #FF7A45; color:white; font-weight:800; text-decoration:none; padding:16px; border-radius:12px;">QUERO COMPRAR AGORA</a>
+    <p style="color:#8FA396; font-size:11px; margin-top:10px;">De R$97 por R$29,90</p>
+    <div style="border-top:1px solid #2A3F2E; margin-top:20px; padding-top:16px;">
+      <p style="color:#EAF0E8; font-size:12px; margin:0;">Já comprou? Acesse:</p>
+      <input id="lock-input" type="password" placeholder="SENHA" style="width:100%; margin-top:10px; padding:12px; border-radius:8px; border:none; background:#0F1A14; color:white; text-align:center;">
+      <button id="lock-btn" onclick="desbloquear()" style="width:100%; margin-top:8px; padding:12px; border-radius:8px; border:none; background:white; color:#0F1A14; font-weight:700;">Desbloquear App</button>
+    </div>
+  </div>
 </div>
 
 <div class="shell">
