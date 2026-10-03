@@ -358,12 +358,13 @@ function renderWorkouts(){
   const g = state.goal || 'hipertrofia';
   function getVideo(nome){
   const vids={
-    "Peito e tríceps":"https://www.youtube.com/embed/CWnqX41O1xM",
-    "Costas e bíceps":"https://www.youtube.com/embed/E1yP9e9pQ6o",
-    "Pernas":"https://www.youtube.com/embed/1f8yoFFdkcY"
-  };
-  return vids[nome] || vids["Peito e tríceps"];
+    "Peito e tríceps":"https://www.youtube.com/embed/rT7DgCr-3pg",
+"Costas e bíceps":"https://www.youtube.com/embed/s8taXR3m2o0",
+"Pernas":"https://www.youtube.com/embed/1f8yo_elGaU"
+};
+return vids[nome] || vids["Peito e tríceps"];
 }
+  
   const items = WORKOUTS[g];
   list.innerHTML='';
   items.forEach(w=>{
