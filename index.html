@@ -147,25 +147,21 @@ a{color:inherit}
 </style>
 </head>
 <body>
-<div id="lock-screen" style="min-height:100vh; position:fixed; top:0; left:0; width:100%; background: linear-gradient(180deg, #0F1A14 0%, #17251D 100%); display:flex; align-items:center; justify-content:center; padding:20px; z-index:9999;">
+<div id="lock-screen" style="min-height:100vh; position:fixed; top:0; left:0; width:100%; background: linear-gradient(180deg, #0F1A14 0%, #17251D 100%); display:flex; align-items:center; justify-content:center; padding:20px; z-index:9999; overflow-y:auto;">
   <div style="max-width:380px; width:100%; background: #1E2F24; border-radius:24px; padding:28px; border:1px solid #2A3F2E; text-align:center;">
     <div style="font-size:48px;">🔥</div>
-    <h1 style="color:#EAF0E8; font-size:22px; font-weight:800; margin:0;">SEQUE ATÉ 10KG EM 30 DIAS</h1>
-    <p style="color:#FF7A45; font-weight:700; margin-top:6px;">COM O PULSO APP</p>
+    <h1 style="color:#EAF0E8; font-size:22px; font-weight:800; margin:0; line-height:1.2;">SEQUE ATÉ 10KG EM 30 DIAS</h1>
+    <p style="color:#FF7A45; font-weight:800; margin-top:8px; letter-spacing:1px;">COM O PULSO APP</p>
     <div style="text-align:left; background:#0F1A14; border-radius:16px; padding:16px; margin:20px 0;">
-      <p style="color:white; font-weight:700; margin:0 0 10px 0; font-size:13px;">VOCÊ VAI RECEBER:</p>
-      <p style="color:#8FA396; font-size:13px; margin:5px 0;">✅ +50 Treinos em Vídeo</p>
-      <p style="color:#8FA396; font-size:13px; margin:5px 0;">✅ Plano Alimentar</p>
-      <p style="color:#8FA396; font-size:13px; margin:5px 0;">✅ Calculadora de Calorias</p>
-      <p style="color:#8FA396; font-size:13px; margin:5px 0;">✅ Acesso Vitalício</p>
+      <p style="color:white; font-weight:700; margin:0 0 12px 0; font-size:13px;">VOCÊ VAI RECEBER:</p>
+      <p style="color:#8FA396; font-size:13px; margin:8px 0;">✅ +50 Treinos em Vídeo</p>
+      <p style="color:#8FA396; font-size:13px; margin:8px 0;">✅ Plano Alimentar</p>
+      <p style="color:#8FA396; font-size:13px; margin:8px 0;">✅ Calculadora de Calorias</p>
+      <p style="color:#8FA396; font-size:13px; margin:8px 0;">✅ Acesso Vitalício no App</p>
     </div>
-    <a href="https://pay.kiwify.com.br/beB8lrj" target="_blank" style="display:block; background: #FF7A45; color:white; font-weight:800; text-decoration:none; padding:16px; border-radius:12px;">QUERO COMPRAR AGORA</a>
-    <p style="color:#8FA396; font-size:11px; margin-top:10px;">De R$97 por R$29,90</p>
-    <div style="border-top:1px solid #2A3F2E; margin-top:20px; padding-top:16px;">
-      <p style="color:#EAF0E8; font-size:12px; margin:0;">Já comprou? Acesse:</p>
-      <input id="lock-input" type="password" placeholder="SENHA" style="width:100%; margin-top:10px; padding:12px; border-radius:8px; border:none; background:#0F1A14; color:white; text-align:center;">
-      <button id="lock-btn" onclick="desbloquear()" style="width:100%; margin-top:8px; padding:12px; border-radius:8px; border:none; background:white; color:#0F1A14; font-weight:700;">Desbloquear App</button>
-    </div>
+    <a href="https://pay.kiwify.com.br/beB8lrj" target="_blank" style="display:block; background: #FF7A45; color:white; font-weight:800; text-decoration:none; padding:18px; border-radius:12px; font-size:16px;">QUERO COMPRAR AGORA</a>
+    <p style="color:#8FA396; font-size:11px; margin-top:12px;">De <s>R$97</s> por apenas <b style="color:white;">R$29,90</b> hoje</p>
+    <p style="color:#5A6E60; font-size:10px; margin-top:16px;">Pagamento 100% seguro pela Kiwify</p>
   </div>
 </div>
 
@@ -482,23 +478,15 @@ function renderChart(){
 document.getElementById('p-add').addEventListener('click', ()=>{
   const val = parseFloat(document.getElementById('p-weight').value);
   if(!val) return;
-  const data = load('pulso_progress', []);
-  data.push({w:val, d:Date.now()});
-  save('pulso_progress', data);
-  document.getElementById('p-weight').value='';
-  renderChart();
-});
-renderChart();
-  const SENHA="PULSO29";
-if(localStorage.getItem('pulso_auth')==='true') document.getElementById('lock-screen').style.display='none';
-function unlock(){
-  if(document.getElementById('lock-input').value.trim().toUpperCase()===SENHA){
-    localStorage.setItem('pulso_auth','true');
-    document.getElementById('lock-screen').style.display='none';
-  } else alert('Senha errada!')
+// TITÃ - DESBLOQUEIO AUTOMÁTICO
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('pago') === '1' || urlParams.get('liberado') === '1') {
+  localStorage.setItem('pulso_desbloqueado', 'true');
 }
-document.getElementById('lock-btn').onclick=unlock;
-document.getElementById('lock-input').onkeydown=e=>{if(e.key==='Enter')unlock()};
+if (localStorage.getItem('pulso_desbloqueado') === 'true') {
+  const lock = document.getElementById('lock-screen');
+  if(lock) lock.style.display = 'none';
+}
 </script>
 </body>
 </html>
