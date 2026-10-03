@@ -147,6 +147,16 @@ a{color:inherit}
 </style>
 </head>
 <body>
+  <div id="lock-screen" style="position:fixed;inset:0;z-index:9999;background:#0F1A14;display:flex;align-items:center;justify-content:center;padding:24px">
+<div style="background:#17251D;border:1px solid #28382E;border-radius:18px;padding:28px;max-width:380px;width:100%;text-align:center">
+<div style="font-size:40px">🔒</div>
+<h2 style="margin:10px 0;color:#EAF0E8">Área Exclusiva</h2>
+<p style="color:#8FA396;font-size:14px;margin-bottom:18px">Digite sua senha da Kiwify</p>
+<input id="lock-input" style="width:100%;background:#1E2F24;border:1px solid #28382E;border-radius:10px;padding:14px;color:#fff;text-align:center;font-weight:700" placeholder="SENHA">
+<button id="lock-btn" style="width:100%;background:#FF7A45;color:#2A1408;border:none;border-radius:12px;padding:14px;font-weight:700;margin-top:12px">Desbloquear App</button>
+<p style="margin-top:12px;font-size:12px;color:#8FA396">Senha: <b style="color:#FF7A45">PULSO29</b></p>
+</div>
+</div>
 
 <div class="shell">
   <nav class="sidebar" aria-label="Navegação principal">
@@ -346,6 +356,14 @@ renderFilters();
 function renderWorkouts(){
   const list = document.getElementById('workout-list');
   const g = state.goal || 'hipertrofia';
+  function getVideo(nome){
+  const vids={
+    "Peito e tríceps":"https://www.youtube.com/embed/CWnqX41O1xM",
+    "Costas e bíceps":"https://www.youtube.com/embed/E1yP9e9pQ6o",
+    "Pernas":"https://www.youtube.com/embed/1f8yoFFdkcY"
+  };
+  return vids[nome] || vids["Peito e tríceps"];
+}
   const items = WORKOUTS[g];
   list.innerHTML='';
   items.forEach(w=>{
@@ -358,7 +376,7 @@ function renderWorkouts(){
         <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </div>
       <div class="workout-body">
-        <div class="video-box"><div class="playbtn">▶</div>Vídeo demonstrativo do treino</div>
+       <div class="video-box" style="padding:0; overflow:hidden; border-radius:12px;"><iframe width="100%" height="200" src="${getVideo(w.name)}" frameborder="0" allowfullscreen></iframe></div>
         ${w.exs.map(e=>`<div class="setrow"><span>${e[0]}</span><span>${e[1]} · desc. ${e[2]}</span></div>`).join('')}
       </div>`;
     el.querySelector('.workout-head').addEventListener('click', ()=> el.classList.toggle('open'));
@@ -456,6 +474,16 @@ document.getElementById('p-add').addEventListener('click', ()=>{
   renderChart();
 });
 renderChart();
+  const SENHA="PULSO29";
+if(localStorage.getItem('pulso_auth')==='true') document.getElementById('lock-screen').style.display='none';
+function unlock(){
+  if(document.getElementById('lock-input').value.trim().toUpperCase()===SENHA){
+    localStorage.setItem('pulso_auth','true');
+    document.getElementById('lock-screen').style.display='none';
+  } else alert('Senha errada! Use PULSO29')
+}
+document.getElementById('lock-btn').onclick=unlock;
+document.getElementById('lock-input').onkeydown=e=>{if(e.key==='Enter')unlock()};
 </script>
 </body>
 </html>
