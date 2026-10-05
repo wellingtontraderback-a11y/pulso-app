@@ -479,6 +479,7 @@ document.getElementById('p-add').addEventListener('click', ()=>{
   const val = parseFloat(document.getElementById('p-weight').value);
   if(!val) return;
 // TITÃ - DESBLOQUEIO AUTOMÁTICO
+// TITÃ - DESBLOQUEIO AUTOMÁTICO - CORRIGIDO
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('pago') === '1' || urlParams.get('liberado') === '1') {
   localStorage.setItem('pulso_desbloqueado', 'true');
