@@ -478,15 +478,16 @@ function renderChart(){
 document.getElementById('p-add').addEventListener('click', ()=>{
   const val = parseFloat(document.getElementById('p-weight').value);
   if(!val) return;
-// TITÃ - DESBLOQUEIO AUTOMÁTICO
-// TITÃ - DESBLOQUEIO AUTOMÁTICO - CORRIGIDO
-const urlParams = new URLSearchParams(window.location.search);
+// TITÃ - DESBLOQUEIO AUTOMATICO DEFINITIVO
+const urlParams = new URLsearchParams(window.location.search);
 if (urlParams.get('pago') === '1' || urlParams.get('liberado') === '1') {
   localStorage.setItem('pulso_desbloqueado', 'true');
 }
-if (localStorage.getItem('pulso_desbloqueado') === 'true') {
+if (localStorage.getItem('pulso_desbloqueado') === 'true' || urlParams.get('pago') === '1') {
   const lock = document.getElementById('lock-screen');
   if(lock) lock.style.display = 'none';
+  const paywall = document.querySelector('.paywall');
+  if(paywall) paywall.style.display = 'none';
 }
 </script>
 </body>
