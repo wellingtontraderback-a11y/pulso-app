@@ -483,8 +483,22 @@ document.getElementById('p-add').addEventListener('click', ()=>{
   const val = parseFloat(document.getElementById('p-weight').value);
   if(!val) return;
 <script>
-// LIBERACAO AUTOMATICA - CORRIGIDO
-const p = new URLSearchParams(window.location.search);
-if(p.get('pago') === '1'){
-  localStorage.setItem('pulso_desbloqueado','true');
-<script>if(new URLSearchParams(location.search).get('pago')==='1'){localStorage.setItem('pulso_desbloqueado','true')}if(localStorage.getItem('pulso_desbloqueado')==='true'){document.addEventListener('DOMContentLoaded',function(){var l=document.getElementById('lock-screen');if(l)l.remove()})}</script></body></html>
+(function(){
+  try{
+    var isPaid = new URLSearchParams(location.search).get('pago')==='1';
+    if(isPaid) localStorage.setItem('pulso_desbloqueado','true');
+    var unlocked = localStorage.getItem('pulso_desbloqueado')==='true' || isPaid;
+    if(unlocked){
+      var css = document.createElement('style');
+      css.innerHTML = '#lock-screen{display:none!important}';
+      document.documentElement.appendChild(css);
+      var remove = function(){ var el=document.getElementById('lock-screen'); if(el) el.remove(); };
+      remove();
+      document.addEventListener('DOMContentLoaded', remove);
+      setInterval(remove, 500);
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
