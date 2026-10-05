@@ -1,6 +1,10 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+<head><script>
+  if(new URLSearchParams(window.location.search).get('pago')==='1'){
+    localStorage.setItem('pulso_desbloqueado','true')
+  }
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pulso — treino, dieta e evolução</title>
@@ -483,23 +487,4 @@ document.getElementById('p-add').addEventListener('click', ()=>{
 const p = new URLSearchParams(window.location.search);
 if(p.get('pago') === '1'){
   localStorage.setItem('pulso_desbloqueado','true');
-}
-if(localStorage.getItem('pulso_desbloqueado') === 'true'){
-  document.addEventListener('DOMContentLoaded', function(){
-    const lock = document.getElementById('lock-screen');
-    if(lock) lock.remove();
-    document.querySelectorAll('*').forEach(function(el){
-      if(el.textContent && el.textContent.includes('QUERO COMPRAR AGORA')){
-        let card = el.closest('div');
-        while(card){
-          if(card.parentElement) { card.style.display='none'; }
-          card = card.parentElement;
-          if(card && card.tagName === 'BODY') break;
-        }
-      }
-    });
-  });
-}
-</script>
-</body>
-</html>
+<script>if(new URLSearchParams(location.search).get('pago')==='1'){localStorage.setItem('pulso_desbloqueado','true')}if(localStorage.getItem('pulso_desbloqueado')==='true'){document.addEventListener('DOMContentLoaded',function(){var l=document.getElementById('lock-screen');if(l)l.remove()})}</script></body></html>
