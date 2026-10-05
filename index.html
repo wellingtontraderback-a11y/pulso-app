@@ -478,17 +478,25 @@ function renderChart(){
 document.getElementById('p-add').addEventListener('click', ()=>{
   const val = parseFloat(document.getElementById('p-weight').value);
   if(!val) return;
-// TITÃ - DESBLOQUEIO AUTOMATICO DEFINITIVO
-const urlParams = new URLsearchParams(window.location.search);
-if (urlParams.get('pago') === '1' || urlParams.get('liberado') === '1') {
-  localStorage.setItem('pulso_desbloqueado', 'true');
-}
-if (localStorage.getItem('pulso_desbloqueado') === 'true' || urlParams.get('pago') === '1') {
-  const lock = document.getElementById('lock-screen');
-  if(lock) lock.style.display = 'none';
-  const paywall = document.querySelector('.paywall');
-  if(paywall) paywall.style.display = 'none';
-}
-</script>
-</body>
-</html>
+// LIBERACAO AUTOMATICA - PULSO DEFINITIVO
+(function(){
+  const p = new URLSearchParams(window.location.search);
+  const pago = p.get('pago') === '1' || p.get('liberado') === '1';
+  if(pago){ localStorage.setItem('pulso_desbloqueado','true'); }
+  if(pago || localStorage.getItem('pulso_desbloqueado') === 'true'){
+    function destrava(){
+      const lock = document.getElementById('lock-screen');
+      if(lock) lock.style.display = 'none';
+      document.querySelectorAll('div').forEach(d=>{
+        if(d.innerText && d.innerText.includes('QUERO COMPRAR AGORA')){
+           d.style.display='none';
+           if(d.parentElement) d.parentElement.style.display='none';
+           if(d.parentElement && d.parentElement.parentElement) d.parentElement.parentElement.style.display='none';
+        }
+      });
+    }
+    destrava();
+    setTimeout(destrava, 500);
+    setTimeout(destrava, 1500);
+  }
+})();
