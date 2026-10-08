@@ -1,506 +1,93 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-<head><script>
-  if(new URLSearchParams(window.location.search).get('pago')==='1'){
-    localStorage.setItem('pulso_desbloqueado','true')
-  }
-</script>
+<head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Pulso — treino, dieta e evolução</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulso - Seu Negócio no Pulso</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0F1A14; --surface:#17251D; --surface-2:#1E2F24; --line:#28382E;
-  --text:#EAF0E8; --muted:#8FA396;
-  --accent:#FF7A45; --accent-ink:#2A1408;
-  --mint:#4DD9A6;
-  --radius:14px;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
-}
-*{box-sizing:inherit;margin:0;padding:0}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-html,body{height:100%}
-body{
-  background:var(--bg); color:var(--text);
-  font-family:'Inter',system-ui,sans-serif;
-  -webkit-font-smoothing:antialiased;
-  min-height:100%;
-}
-h1,h2,h3,.num{font-family:'Bricolage Grotesque',system-ui,sans-serif}
-button{font-family:inherit;cursor:pointer}
-::selection{background:var(--accent);color:var(--accent-ink)}
-a{color:inherit}
-
-.shell{display:flex; min-height:100vh}
-.sidebar{
-  display:none; width:220px; flex-direction:column; gap:4px;
-  padding:28px 14px; border-right:1px solid var(--line);
-  position:sticky; top:0; height:100vh;
-}
-.sidebar .brand{font-size:22px; font-weight:800; padding:0 12px 24px; letter-spacing:-.02em}
-.sidebar .brand span{color:var(--accent)}
-.navitem{
-  display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:10px;
-  color:var(--muted); font-weight:600; font-size:14.5px; border:none; background:none; text-align:left; width:100%;
-}
-.navitem svg{flex-shrink:0}
-.navitem.active{background:var(--surface-2); color:var(--text)}
-
-.main{flex:1; max-width:900px; margin:0 auto; width:100%; padding:24px 18px 100px}
-
-.topbar{display:flex; justify-content:space-between; align-items:center; margin-bottom:22px}
-.topbar h1{font-size:24px; font-weight:800; letter-spacing:-.02em}
-.pill{background:var(--surface-2); border:1px solid var(--line); border-radius:100px; padding:6px 14px; font-size:13px; color:var(--muted); font-weight:600}
-
-.view{display:none; animation:rise .35s ease}
-.view.active{display:block}
-@keyframes rise{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
-@media (prefers-reduced-motion:reduce){.view{animation:none}}
-
-.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px}
-.card + .card{margin-top:12px}
-
-.goal-grid{display:grid; grid-template-columns:1fr; gap:10px; margin-top:16px}
-.goal-btn{
-  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-  padding:16px; text-align:left; color:var(--text); display:flex; justify-content:space-between; align-items:center;
-}
-.goal-btn.selected{border-color:var(--accent); background:var(--surface-2)}
-.goal-btn strong{display:block; font-size:15.5px}
-.goal-btn small{color:var(--muted); font-size:13px}
-.check{width:20px; height:20px; border-radius:50%; border:1.5px solid var(--line); flex-shrink:0}
-.goal-btn.selected .check{background:var(--accent); border-color:var(--accent)}
-
-.plan-hero{background:linear-gradient(160deg, var(--surface-2), var(--surface)); border:1px solid var(--line); border-radius:18px; padding:22px}
-.plan-hero .label{color:var(--accent); font-weight:700; font-size:13px}
-.plan-hero h2{font-size:21px; margin-top:6px; line-height:1.25}
-.plan-hero p{color:var(--muted); margin-top:8px; font-size:14px; line-height:1.5}
-
-.stat-row{display:flex; gap:10px; margin-top:16px}
-.stat{flex:1; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px}
-.stat .num{font-size:20px; font-weight:700}
-.stat .lbl{color:var(--muted); font-size:12px; margin-top:2px}
-
-.section-title{font-size:13px; text-transform:none; color:var(--muted); font-weight:600; margin:22px 0 10px}
-
-.workout-item{border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin-bottom:10px}
-.workout-head{display:flex; align-items:center; gap:12px; padding:14px; background:var(--surface)}
-.thumb{width:44px; height:44px; border-radius:10px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; flex-shrink:0}
-.workout-head .info{flex:1}
-.workout-head .info strong{font-size:14.5px}
-.workout-head .info small{color:var(--muted); font-size:12.5px}
-.chev{transition:transform .2s}
-.workout-item.open .chev{transform:rotate(180deg)}
-.workout-body{display:none; padding:0 14px 16px; background:var(--surface)}
-.workout-item.open .workout-body{display:block}
-.setrow{display:flex; justify-content:space-between; padding:9px 0; border-top:1px solid var(--line); font-size:13.5px}
-.setrow span:last-child{color:var(--muted)}
-.video-box{margin-top:10px; height:150px; border-radius:10px; background:var(--surface-2); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:var(--muted); font-size:12.5px}
-.playbtn{width:44px; height:44px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center}
-
-.filters{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px}
-.filter-chip{border:1px solid var(--line); background:var(--surface); color:var(--muted); border-radius:100px; padding:8px 14px; font-size:13px; font-weight:600; white-space:nowrap}
-.filter-chip.active{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
-
-.field{margin-bottom:14px}
-.field label{display:block; font-size:13px; color:var(--muted); margin-bottom:6px; font-weight:600}
-.field input,.field select{
-  width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:10px;
-  padding:12px 13px; color:var(--text); font-size:15px;
-}
-.field input:focus,.field select:focus,button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-.two-col{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-.btn-primary{
-  width:100%; background:var(--accent); color:var(--accent-ink); border:none; border-radius:12px;
-  padding:14px; font-weight:700; font-size:15px; margin-top:6px;
-}
-.btn-primary:active{transform:scale(.98)}
-.btn-ghost{width:100%; background:var(--surface-2); color:var(--text); border:1px solid var(--line); border-radius:12px; padding:12px; font-weight:600; font-size:14px; margin-top:10px}
-
-.result-hero{text-align:center; padding:22px 0 6px}
-.result-hero .num{font-size:44px; font-weight:800; color:var(--accent)}
-.result-hero .lbl{color:var(--muted); font-size:13px; margin-top:2px}
-
-.meal{border-top:1px solid var(--line); padding:13px 0}
-.meal:first-child{border-top:none; padding-top:2px}
-.meal-head{display:flex; justify-content:space-between; font-weight:700; font-size:14.5px}
-.meal ul{margin-top:6px; padding-left:0; list-style:none}
-.meal li{color:var(--muted); font-size:13.5px; padding:3px 0; display:flex; justify-content:space-between}
-
-.chart-wrap{margin-top:8px}
-.empty{color:var(--muted); font-size:13.5px; text-align:center; padding:30px 10px}
-
-.tabbar{
-  position:fixed; bottom:0; left:0; right:0; display:flex; background:var(--surface);
-  border-top:1px solid var(--line); padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px));
-}
-.tabbar .navitem{align-items:center; flex-direction:column; gap:3px; font-size:10.5px; padding:6px 2px; border-radius:10px}
-.tabbar .navitem.active{background:none; color:var(--accent)}
-
-@media (min-width:840px){
-  .sidebar{display:flex}
-  .tabbar{display:none}
-  .main{padding:36px 40px}
-  .goal-grid{grid-template-columns:1fr 1fr 1fr}
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#0a0a0a;color:#fff;min-height:100vh}
+.header{background:linear-gradient(135deg,#a3ff12,#00ff88);padding:20px;color:#000;text-align:center}
+.header h1{font-size:28px;font-weight:800}
+.container{max-width:480px;margin:0 auto;padding:16px}
+.card{background:#1a1a1a;border-radius:16px;padding:16px;margin-bottom:16px;border:1px solid #2a2a2a}
+.input{width:100%;background:#252525;border:1px solid #333;border-radius:10px;padding:12px;color:#fff;margin-bottom:10px}
+.btn{width:100%;background:#a3ff12;color:#000;border:none;padding:14px;border-radius:12px;font-weight:800;cursor:pointer;font-size:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:#252525;border-radius:12px;padding:12px;text-align:center}
+.stat b{color:#a3ff12;font-size:20px;display:block}
+.cliente{background:#252525;padding:12px;border-radius:10px;margin-bottom:8px;display:flex;justify-content:space-between}
+.tag{font-size:11px;padding:4px 8px;border-radius:20px;font-weight:600}
+.tag-quente{background:#ff3b30;color:#fff}.tag-frio{background:#007aff;color:#fff}.tag-venda{background:#a3ff12;color:#000}
+.streak{background:linear-gradient(135deg,#ff6b00,#ffaa00);border-radius:12px;padding:12px;text-align:center;color:#000;font-weight:800}
+.missao{background:#252525;border-left:4px solid #a3ff12;padding:12px;border-radius:8px;margin-bottom:8px}
 </style>
 </head>
 <body>
-<div id="lock-screen" style="min-height:100vh; position:fixed; top:0; left:0; width:100%; background: linear-gradient(180deg, #0F1A14 0%, #17251D 100%); display:flex; align-items:center; justify-content:center; padding:20px; z-index:9999; overflow-y:auto;">
-  <div style="max-width:380px; width:100%; background: #1E2F24; border-radius:24px; padding:28px; border:1px solid #2A3F2E; text-align:center;">
-    <div style="font-size:48px;">🔥</div>
-    <h1 style="color:#EAF0E8; font-size:22px; font-weight:800; margin:0; line-height:1.2;">SEQUE ATÉ 10KG EM 30 DIAS</h1>
-    <p style="color:#FF7A45; font-weight:800; margin-top:8px; letter-spacing:1px;">COM O PULSO APP</p>
-    <div style="text-align:left; background:#0F1A14; border-radius:16px; padding:16px; margin:20px 0;">
-      <p style="color:white; font-weight:700; margin:0 0 12px 0; font-size:13px;">VOCÊ VAI RECEBER:</p>
-      <p style="color:#8FA396; font-size:13px; margin:8px 0;">✅ +50 Treinos em Vídeo</p>
-      <p style="color:#8FA396; font-size:13px; margin:8px 0;">✅ Plano Alimentar</p>
-      <p style="color:#8FA396; font-size:13px; margin:8px 0;">✅ Calculadora de Calorias</p>
-      <p style="color:#8FA396; font-size:13px; margin:8px 0;">✅ Acesso Vitalício no App</p>
-    </div>
-    <a href="https://pay.kiwify.com.br/beB8lrj" target="_blank" style="display:block; background: #FF7A45; color:white; font-weight:800; text-decoration:none; padding:18px; border-radius:12px; font-size:16px;">QUERO COMPRAR AGORA</a>
-    <p style="color:#8FA396; font-size:11px; margin-top:12px;">De <s>R$97</s> por apenas <b style="color:white;">R$29,90</b> hoje</p>
-    <p style="color:#5A6E60; font-size:10px; margin-top:16px;">Pagamento 100% seguro pela Kiwify</p>
-  </div>
+<div class="header">
+<h1>PULSO</h1>
+<p>Clientes, vendas e dinheiro no seu pulso 💰</p>
+<div style="margin-top:12px;background:#000;color:#a3ff12;display:inline-block;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:800" id="streakDisplay">🔥 STREAK: 1 DIA</div>
 </div>
-
-<div class="shell">
-  <nav class="sidebar" aria-label="Navegação principal">
-    <div class="brand">Pulso<span>.</span></div>
-    <button class="navitem active" data-view="inicio">🏠&nbsp;&nbsp;Início</button>
-    <button class="navitem" data-view="treinos">🏋️&nbsp;&nbsp;Treinos</button>
-    <button class="navitem" data-view="dieta">🥗&nbsp;&nbsp;Dieta</button>
-    <button class="navitem" data-view="calc">🧮&nbsp;&nbsp;Calculadora</button>
-    <button class="navitem" data-view="progresso">📈&nbsp;&nbsp;Progresso</button>
-  </nav>
-
-  <main class="main">
-
-    <div class="view active" id="view-inicio">
-      <div class="topbar"><h1>Olá 👋</h1><span class="pill" id="goal-pill">Defina seu objetivo</span></div>
-
-      <div class="card">
-        <strong>Qual é o seu objetivo agora?</strong>
-        <div class="goal-grid" id="goal-grid"></div>
-      </div>
-
-      <div class="section-title">Plano de hoje, gerado pra você</div>
-      <div class="plan-hero">
-        <div class="label">SEGUNDA-FEIRA · IA PULSO</div>
-        <h2 id="plan-title">Escolha um objetivo para gerar seu plano do dia</h2>
-        <p id="plan-text">O plano diário muda com base no seu objetivo, no seu progresso da semana e no treino que você já fez hoje.</p>
-        <div class="stat-row">
-          <div class="stat"><div class="num" id="plan-kcal">—</div><div class="lbl">meta de kcal</div></div>
-          <div class="stat"><div class="num" id="plan-workout">—</div><div class="lbl">treino de hoje</div></div>
-          <div class="stat"><div class="num" id="plan-water">2,5L</div><div class="lbl">água sugerida</div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="view" id="view-treinos">
-      <div class="topbar"><h1>Treinos</h1></div>
-      <div class="filters" id="workout-filters"></div>
-      <div class="section-title">Sua lista de hoje</div>
-      <div id="workout-list"></div>
-    </div>
-
-    <div class="view" id="view-dieta">
-      <div class="topbar"><h1>Dieta</h1></div>
-      <div class="card">
-        <strong>Plano alimentar gerado por IA</strong>
-        <p style="color:var(--muted); font-size:13.5px; margin-top:6px">Baseado no seu objetivo e na meta calórica da calculadora.</p>
-        <button class="btn-primary" id="gen-diet">Gerar plano de hoje</button>
-      </div>
-      <div id="diet-output"></div>
-    </div>
-
-    <div class="view" id="view-calc">
-      <div class="topbar"><h1>Calculadora</h1></div>
-      <div class="card">
-        <strong>Metabolismo basal e gasto diário</strong>
-        <div class="field" style="margin-top:14px">
-          <label>Sexo biológico</label>
-          <select id="c-sex"><option value="m">Masculino</option><option value="f">Feminino</option></select>
-        </div>
-        <div class="two-col">
-          <div class="field"><label>Idade</label><input type="number" id="c-age" placeholder="30"></div>
-          <div class="field"><label>Peso (kg)</label><input type="number" id="c-weight" placeholder="75"></div>
-        </div>
-        <div class="two-col">
-          <div class="field"><label>Altura (cm)</label><input type="number" id="c-height" placeholder="175"></div>
-          <div class="field">
-            <label>Atividade</label>
-            <select id="c-activity">
-              <option value="1.2">Sedentário</option>
-              <option value="1.375">Leve (1–3x/sem)</option>
-              <option value="1.55" selected>Moderado (3–5x/sem)</option>
-              <option value="1.725">Intenso (6–7x/sem)</option>
-            </select>
-          </div>
-        </div>
-        <button class="btn-primary" id="calc-btn">Calcular</button>
-      </div>
-      <div class="card" id="calc-result" style="display:none">
-        <div class="result-hero">
-          <div class="num" id="r-tdee">—</div>
-          <div class="lbl">kcal/dia para manter o peso</div>
-        </div>
-        <div class="stat-row">
-          <div class="stat"><div class="num" id="r-bmr">—</div><div class="lbl">taxa basal (TMB)</div></div>
-          <div class="stat"><div class="num" id="r-goal">—</div><div class="lbl">meta p/ seu objetivo</div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="view" id="view-progresso">
-      <div class="topbar"><h1>Progresso</h1></div>
-      <div class="card">
-        <strong>Registrar peso de hoje</strong>
-        <div style="display:flex; gap:10px; margin-top:12px">
-          <input type="number" id="p-weight" placeholder="Peso em kg" style="flex:1; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:12px; color:var(--text); font-size:15px">
-          <button class="btn-primary" id="p-add" style="width:auto; padding:0 20px">Salvar</button>
-        </div>
-      </div>
-      <div class="card chart-wrap">
-        <strong>Evolução semanal</strong>
-        <svg id="chart" viewBox="0 0 320 140" style="width:100%; height:auto; margin-top:14px"></svg>
-      </div>
-    </div>
-
-  </main>
+<div class="container">
+<div class="card streak"><span id="fraseDia">Hoje você precisa fechar R$ 127 pra bater sua meta!</span></div>
+<div class="grid2">
+<div class="stat"><b id="totalClientes">0</b><span>Clientes</span></div>
+<div class="stat"><b id="totalVendas">R$ 0</b><span>Vendas mês</span></div>
+<div class="stat"><b id="aReceber">R$ 0</b><span>A receber</span></div>
+<div class="stat"><b id="lucro">R$ 0</b><span>Lucro</span></div>
 </div>
-
-<nav class="tabbar" aria-label="Navegação">
-  <button class="navitem active" data-view="inicio">🏠<span>Início</span></button>
-  <button class="navitem" data-view="treinos">🏋️<span>Treinos</span></button>
-  <button class="navitem" data-view="dieta">🥗<span>Dieta</span></button>
-  <button class="navitem" data-view="calc">🧮<span>Calc.</span></button>
-  <button class="navitem" data-view="progresso">📈<span>Evolução</span></button>
-</nav>
-
+<div class="card">
+<div style="font-weight:600;margin-bottom:12px">🎯 Missões de Hoje <span id="progressMissao" style="background:#a3ff12;color:#000;padding:2px 8px;border-radius:10px;font-size:11px">0/3</span></div>
+<div class="missao"><input type="checkbox" onchange="checkMissao(this)"> Cobrar 1 cliente hoje (+ R$)</div>
+<div class="missao"><input type="checkbox" onchange="checkMissao(this)"> Adicionar 2 clientes novos</div>
+<div class="missao"><input type="checkbox" onchange="checkMissao(this)"> Enviar 3 orçamentos no WhatsApp</div>
+</div>
+<div class="card">
+<div style="font-weight:600;margin-bottom:12px">+ Novo Cliente</div>
+<input id="nomeCliente" class="input" placeholder="Nome: Ex: Maria da Loja">
+<input id="whatsCliente" class="input" placeholder="WhatsApp: (11) 99999-9999">
+<select id="statusCliente" class="input">
+<option value="quente">🔥 Quente - Quer comprar agora</option>
+<option value="frio">❄️ Frio - Só perguntou preço</option>
+<option value="venda">✅ Venda fechada</option>
+</select>
+<input id="valorCliente" class="input" type="number" placeholder="Valor: R$ 150">
+<button class="btn" onclick="addCliente()">SALVAR E GERAR WHATSAPP</button>
+</div>
+<div class="card">
+<div style="font-weight:600;margin-bottom:12px">📋 Meus Clientes <span id="qtdLista">0</span></div>
+<div id="listaClientes"></div>
+</div>
+<div class="card" style="border:1px dashed #a3ff12">
+<div style="font-weight:600">🔒 Seus dados estão salvos no seu celular</div>
+<p style="font-size:12px;opacity:0.6;margin-top:6px">Se você pedir reembolso, perde tudo. Clientes, histórico e dinheiro a receber somem. Seu streak de <span id="streakText2">1 dia</span> vai zerar!</p>
+<a href="https://pay.kiwify.com.br/beB8lrj" target="_blank" style="display:block;margin-top:12px;background:#fff;color:#000;text-align:center;text-decoration:none;padding:12px;border-radius:10px;font-weight:800">GARANTIR ACESSO VITALÍCIO - R$29,90</a>
+</div>
+</div>
+<div id="paywall" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:9999;justify-content:center;align-items:center;padding:20px">
+<div style="background:#1a1a1a;border:2px solid #a3ff12;border-radius:20px;padding:24px;max-width:360px;width:100%;text-align:center">
+<h2 style="color:#a3ff12;font-size:22px;font-weight:800">🔒 LIBERE ACESSO VITALÍCIO</h2>
+<p style="margin:12px 0;font-size:14px;opacity:0.8">Você já adicionou 2 clientes! Pra continuar salvando e não perder seus dados, libere agora.</p>
+<div style="background:#252525;border-radius:12px;padding:12px;margin:12px 0">
+<p style="font-size:12px;opacity:0.6">DE R$ 97 POR APENAS</p>
+<b style="font-size:28px;color:#a3ff12">R$ 29,90</b><br><span style="font-size:11px">pagamento único - acesso pra sempre</span>
+</div>
+<a href="https://pay.kiwify.com.br/beB8lrj" target="_blank" style="display:block;background:#a3ff12;color:#000;text-decoration:none;padding:16px;border-radius:12px;font-weight:800">LIBERAR MEU PULSO AGORA 🚀</a>
+<p style="font-size:11px;opacity:0.5;margin-top:10px">✓ 7 dias de garantia Kiwify ✓ Dados salvos ✓ Suporte no WhatsApp</p>
+<button onclick="document.getElementById('paywall').style.display='none'" style="background:none;border:none;color:#666;margin-top:12px;font-size:12px">Continuar grátis por agora</button>
+</div>
+</div>
 <script>
-// ---------- storage helpers ----------
-function load(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
-function save(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
-
-// ---------- navigation ----------
-document.querySelectorAll('.navitem').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const v = btn.dataset.view;
-    document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active', x.id==='view-'+v));
-    document.querySelectorAll('.navitem').forEach(x=>x.classList.toggle('active', x.dataset.view===v));
-  });
-});
-
-// ---------- goals ----------
-const GOALS = [
-  {id:'emagrecimento', label:'Emagrecimento', sub:'Déficit calórico, foco em cardio + força', kcalAdj:-0.18},
-  {id:'hipertrofia', label:'Hipertrofia', sub:'Volume alto, foco em técnica e progressão', kcalAdj:0.08},
-  {id:'massa', label:'Ganho de massa', sub:'Superávit calórico, foco em força', kcalAdj:0.15},
-];
-let state = load('pulso_state', {goal:null});
-
-const goalGrid = document.getElementById('goal-grid');
-GOALS.forEach(g=>{
-  const b = document.createElement('button');
-  b.className = 'goal-btn' + (state.goal===g.id ? ' selected':'');
-  b.innerHTML = `<div><strong>${g.label}</strong><small>${g.sub}</small></div><div class="check"></div>`;
-  b.addEventListener('click', ()=>{ state.goal=g.id; save('pulso_state', state); renderGoal(); renderWorkouts(); });
-  goalGrid.appendChild(b);
-});
-
-function goalObj(){ return GOALS.find(g=>g.id===state.goal); }
-
-function renderGoal(){
-  document.querySelectorAll('.goal-btn').forEach((b,i)=> b.classList.toggle('selected', GOALS[i].id===state.goal));
-  const g = goalObj();
-  document.getElementById('goal-pill').textContent = g ? g.label : 'Defina seu objetivo';
-  const planTitle = document.getElementById('plan-title');
-  const planText = document.getElementById('plan-text');
-  const planKcal = document.getElementById('plan-kcal');
-  const planWorkout = document.getElementById('plan-workout');
-  if(g){
-    const titles = {emagrecimento:'Hoje: treino metabólico + caminhada leve', hipertrofia:'Hoje: treino de peito e tríceps, foco em técnica', massa:'Hoje: treino de pernas pesado, comer bem no pós-treino'};
-    planTitle.textContent = titles[g.id];
-    planText.textContent = 'Gerado com base no seu objetivo, na sua meta calórica e no treino de ontem.';
-    const base = load('pulso_calc', null);
-    planKcal.textContent = base ? Math.round(base.tdee*(1+g.kcalAdj)) : '—';
-    planWorkout.textContent = {emagrecimento:'Cardio+', hipertrofia:'Peito', massa:'Pernas'}[g.id];
-  }
-}
-renderGoal();
-
-// ---------- workouts ----------
-const WORKOUTS = {
-  emagrecimento: [
-    {name:'Circuito metabólico', dur:'32 min', exs:[['Agachamento livre','3 × 15','45s'],['Burpee','3 × 10','45s'],['Mountain climber','3 × 30s','30s'],['Prancha','3 × 40s','30s']]},
-    {name:'Cardio + core', dur:'25 min', exs:[['Corrida leve','1 × 15 min','—'],['Abdominal bicicleta','3 × 20','30s'],['Prancha lateral','3 × 30s','30s']]},
-  ],
-  hipertrofia: [
-    {name:'Peito e tríceps', dur:'50 min', exs:[['Supino reto','4 × 10','90s'],['Crucifixo','3 × 12','60s'],['Tríceps corda','4 × 12','60s'],['Mergulho no banco','3 × 12','60s']]},
-    {name:'Costas e bíceps', dur:'48 min', exs:[['Puxada frontal','4 × 10','90s'],['Remada curvada','4 × 10','90s'],['Rosca direta','3 × 12','60s']]},
-  ],
-  massa: [
-    {name:'Pernas pesado', dur:'55 min', exs:[['Agachamento livre','5 × 6','120s'],['Leg press','4 × 8','90s'],['Cadeira extensora','3 × 12','60s'],['Panturrilha em pé','4 × 15','45s']]},
-    {name:'Ombro e trapézio', dur:'40 min', exs:[['Desenvolvimento militar','4 × 8','90s'],['Elevação lateral','4 × 12','60s'],['Encolhimento','3 × 15','60s']]},
-  ],
-};
-
-function renderFilters(){
-  const wrap = document.getElementById('workout-filters');
-  wrap.innerHTML='';
-  GOALS.forEach(g=>{
-    const c = document.createElement('button');
-    c.className = 'filter-chip' + (state.goal===g.id ? ' active':'');
-    c.textContent = g.label;
-    c.addEventListener('click', ()=>{ state.goal=g.id; save('pulso_state', state); renderGoal(); renderFilters(); renderWorkouts(); });
-    wrap.appendChild(c);
-  });
-}
-renderFilters();
-
-function renderWorkouts(){
-  const list = document.getElementById('workout-list');
-  const g = state.goal || 'hipertrofia';
-  function getVideo(nome){
-const vids={
- "Circuito metabólico":"https://www.youtube.com/embed/NJOsRKadLeA",
-"Cardio + core":"https://www.youtube.com/embed/_KlHTWe1lD0",
-"Peito e tríceps":"https://www.youtube.com/embed/Cy_JJrnQt4k",
-"Costas e bíceps":"https://www.youtube.com/embed/ojyDYStQh-o",
-"Pernas pesado":"https://www.youtube.com/embed/EEEx3kRzqag",
-"Ombro e trapézio":"https://www.youtube.com/embed/Qkdg6GFsxx4"
-};
-return vids[nome] || vids["Peito e tríceps"];
-}
-  
-  const items = WORKOUTS[g];
-  list.innerHTML='';
-  items.forEach(w=>{
-    const el = document.createElement('div');
-    el.className='workout-item';
-    el.innerHTML = `
-      <div class="workout-head">
-        <div class="thumb">🏋️</div>
-        <div class="info"><strong>${w.name}</strong><br><small>${w.exs.length} exercícios · ${w.dur}</small></div>
-        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </div>
-      <div class="workout-body">
-       <div class="video-box" style="padding:0; overflow:hidden; border-radius:12px;"><iframe width="100%" height="200" src="${getVideo(w.name)}" frameborder="0" allowfullscreen></iframe></div>
-        ${w.exs.map(e=>`<div class="setrow"><span>${e[0]}</span><span>${e[1]} · desc. ${e[2]}</span></div>`).join('')}
-      </div>`;
-    el.querySelector('.workout-head').addEventListener('click', ()=> el.classList.toggle('open'));
-    list.appendChild(el);
-  });
-}
-renderWorkouts();
-
-// ---------- calculator ----------
-document.getElementById('calc-btn').addEventListener('click', ()=>{
-  const sex = document.getElementById('c-sex').value;
-  const age = parseFloat(document.getElementById('c-age').value)||0;
-  const weight = parseFloat(document.getElementById('c-weight').value)||0;
-  const height = parseFloat(document.getElementById('c-height').value)||0;
-  const activity = parseFloat(document.getElementById('c-activity').value);
-  if(!age||!weight||!height) return;
-  const bmr = sex==='m'
-    ? 10*weight + 6.25*height - 5*age + 5
-    : 10*weight + 6.25*height - 5*age - 161;
-  const tdee = bmr*activity;
-  save('pulso_calc', {bmr, tdee});
-  document.getElementById('r-bmr').textContent = Math.round(bmr);
-  document.getElementById('r-tdee').textContent = Math.round(tdee);
-  const g = goalObj();
-  document.getElementById('r-goal').textContent = g ? Math.round(tdee*(1+g.kcalAdj)) : Math.round(tdee);
-  document.getElementById('calc-result').style.display='block';
-  renderGoal();
-});
-
-// ---------- diet generator ----------
-const MEALS_POOL = {
-  emagrecimento: [
-    ['Café da manhã',[['Omelete de claras (3 un)','180 kcal'],['Aveia com fruta','160 kcal']]],
-    ['Almoço',[['Frango grelhado 150g','250 kcal'],['Arroz integral 4 col','120 kcal'],['Salada à vontade','40 kcal']]],
-    ['Lanche',[['Iogurte natural + chia','130 kcal']]],
-    ['Jantar',[['Peixe grelhado 150g','220 kcal'],['Legumes no vapor','80 kcal']]],
-  ],
-  hipertrofia: [
-    ['Café da manhã',[['Ovos (3 un) + pão integral','320 kcal'],['Banana','90 kcal']]],
-    ['Almoço',[['Carne magra 180g','300 kcal'],['Arroz 6 col','180 kcal'],['Feijão','90 kcal']]],
-    ['Lanche',[['Whey + aveia + pasta de amendoim','340 kcal']]],
-    ['Jantar',[['Frango 180g','270 kcal'],['Batata doce','150 kcal']]],
-  ],
-  massa: [
-    ['Café da manhã',[['Panqueca de aveia + ovos','420 kcal'],['Leite + fruta','180 kcal']]],
-    ['Almoço',[['Carne 200g','360 kcal'],['Arroz 8 col','240 kcal'],['Feijão + salada','130 kcal']]],
-    ['Lanche',[['Sanduíche de frango + queijo','380 kcal']]],
-    ['Jantar',[['Salmão 200g','400 kcal'],['Purê + legumes','200 kcal']]],
-  ],
-};
-document.getElementById('gen-diet').addEventListener('click', ()=>{
-  const g = state.goal || 'hipertrofia';
-  const calc = load('pulso_calc', null);
-  const gObj = goalObj();
-  const target = calc && gObj ? Math.round(calc.tdee*(1+gObj.kcalAdj)) : 2200;
-  const meals = MEALS_POOL[g];
-  const out = document.getElementById('diet-output');
-  out.innerHTML = `<div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center">
-        <strong>Plano de hoje</strong><span class="pill">${target} kcal</span>
-      </div>
-      ${meals.map(m=>`<div class="meal"><div class="meal-head">${m[0]}</div><ul>${m[1].map(i=>`<li><span>${i[0]}</span><span>${i[1]}</span></li>`).join('')}</ul></div>`).join('')}
-    </div>`;
-});
-
-// ---------- progress chart ----------
-function renderChart(){
-  const data = load('pulso_progress', []);
-  const svg = document.getElementById('chart');
-  if(data.length < 2){
-    svg.innerHTML = `<text x="160" y="70" fill="#8FA396" font-size="12" text-anchor="middle">Registre pelo menos 2 pesos para ver o gráfico</text>`;
-    return;
-  }
-  const vals = data.map(d=>d.w);
-  const min = Math.min(...vals), max = Math.max(...vals);
-  const pad = 16;
-  const w = 320, h = 140;
-  const range = (max-min)||1;
-  const pts = vals.map((v,i)=>{
-    const x = pad + i*((w-pad*2)/(vals.length-1));
-    const y = h-pad - ((v-min)/range)*(h-pad*2);
-    return [x,y];
-  });
-  const path = pts.map((p,i)=> (i===0?'M':'L')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
-  const dots = pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="#FF7A45"/>`).join('');
-  svg.innerHTML = `<path d="${path}" fill="none" stroke="#FF7A45" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>${dots}`;
-}
-document.getElementById('p-add').addEventListener('click', ()=>{
-  const val = parseFloat(document.getElementById('p-weight').value);
-  if(!val) return;
-});
-</script>
-<script>
-(function(){
-  try{
-    var isPaid = new URLSearchParams(location.search).get('pago')==='1';
-    if(isPaid) localStorage.setItem('pulso_desbloqueado','true');
-    var unlocked = localStorage.getItem('pulso_desbloqueado')==='true' || isPaid;
-    if(unlocked){
-      var css = document.createElement('style');
-      css.innerHTML = '#lock-screen{display:none!important}';
-      document.documentElement.appendChild(css);
-      var remove = function(){ var el=document.getElementById('lock-screen'); if(el) el.remove(); };
-      remove();
-      document.addEventListener('DOMContentLoaded', remove);
-      setInterval(remove, 500);
-    }
-  }catch(e){}
-})();
+let clientes=JSON.parse(localStorage.getItem('pulso_clientes')||'[]');let missoes=0;
+function save(){localStorage.setItem('pulso_clientes',JSON.stringify(clientes));render();}
+function addCliente(){const nome=document.getElementById('nomeCliente').value;const whats=document.getElementById('whatsCliente').value;const status=document.getElementById('statusCliente').value;const valor=parseFloat(document.getElementById('valorCliente').value)||0;if(!nome){alert('Coloca o nome!');return;}clientes.unshift({nome,whats,status,valor,data:new Date().toLocaleDateString()});save();document.getElementById('nomeCliente').value='';document.getElementById('valorCliente').value='';const msg=`Oi ${nome}! Seu orçamento de R$ ${valor} está pronto!`;if(whats){window.open(`https://wa.me/55${whats.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');}checkPaywall();}
+function render(){const lista=document.getElementById('listaClientes');lista.innerHTML='';let total=0,receber=0,vendas=0;clientes.forEach((c,i)=>{if(c.status==='venda')vendas+=c.valor;else receber+=c.valor;total++;const div=document.createElement('div');div.className='cliente';div.innerHTML=`<div><b>${c.nome}</b><br><span style="font-size:11px;opacity:0.6">R$ ${c.valor} - ${c.data}</span></div><div><span class="tag tag-${c.status}">${c.status.toUpperCase()}</span><br><button onclick="del(${i})" style="background:none;border:none;color:#666;font-size:10px">apagar</button></div>`;lista.appendChild(div);});document.getElementById('totalClientes').innerText=total;document.getElementById('totalVendas').innerText='R$ '+vendas;document.getElementById('aReceber').innerText='R$ '+receber;document.getElementById('lucro').innerText='R$ '+(vendas*0.7).toFixed(0);document.getElementById('qtdLista').innerText=total;}
+function del(i){clientes.splice(i,1);save();}
+function checkMissao(el){if(el.checked)missoes++;else missoes--;document.getElementById('progressMissao').innerText=missoes+'/3';if(missoes===3){alert('🔥 BOA! Missões completas! Streak +1!');let s=parseInt(localStorage.getItem('streak')||'1')+1;localStorage.setItem('streak',s);document.getElementById('streakDisplay').innerText='🔥 STREAK: '+s+' DIAS';document.getElementById('streakText2').innerText=s+' dias';}}
+function checkPaywall(){const pago=localStorage.getItem('pulso_pago');const count=JSON.parse(localStorage.getItem('pulso_clientes')||'[]').length;if(window.location.search.includes('pago')){localStorage.setItem('pulso_pago','1');return;}if(!pago&&count>=2){document.getElementById('paywall').style.display='flex';}}
+render();let s=localStorage.getItem('streak')||'1';document.getElementById('streakDisplay').innerText='🔥 STREAK: '+s+' DIAS';document.getElementById('streakText2').innerText=s+' dias';setTimeout(checkPaywall,3000);
 </script>
 </body>
 </html>
